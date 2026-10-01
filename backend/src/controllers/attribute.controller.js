@@ -3,16 +3,22 @@ const {
   ValidationError,
   ForeignKeyConstraintError,
 } = require("sequelize");
-const { Attribute } = require("../models");
+const { Attribute } = require("@models");
 
 const trimText = (value) => (typeof value === "string" ? value.trim() : value);
 
 // Only these columns can be set from the request body.
 // Keys that are not sent are left out so an update doesn't overwrite them.
-const pickAttributeFields = ({ attribute_name, attribute_value, active } = {}) => {
+const pickAttributeFields = ({
+  attribute_name,
+  attribute_value,
+  active,
+} = {}) => {
   const fields = {};
-  if (attribute_name !== undefined) fields.attribute_name = trimText(attribute_name);
-  if (attribute_value !== undefined) fields.attribute_value = trimText(attribute_value);
+  if (attribute_name !== undefined)
+    fields.attribute_name = trimText(attribute_name);
+  if (attribute_value !== undefined)
+    fields.attribute_value = trimText(attribute_value);
   if (active !== undefined) fields.active = active;
   return fields;
 };
@@ -29,11 +35,19 @@ const checkRequiredText = (name, value, maxLength) => {
 
 const validateAttributeFields = (fields, { isCreate }) => {
   if (isCreate || "attribute_name" in fields) {
-    const error = checkRequiredText("attribute_name", fields.attribute_name, 50);
+    const error = checkRequiredText(
+      "attribute_name",
+      fields.attribute_name,
+      50,
+    );
     if (error) return error;
   }
   if (isCreate || "attribute_value" in fields) {
-    const error = checkRequiredText("attribute_value", fields.attribute_value, 100);
+    const error = checkRequiredText(
+      "attribute_value",
+      fields.attribute_value,
+      100,
+    );
     if (error) return error;
   }
   if ("active" in fields && typeof fields.active !== "boolean") {
@@ -56,7 +70,8 @@ const handleError = (res, error) => {
   }
   if (error instanceof ForeignKeyConstraintError) {
     return res.status(409).json({
-      message: "Attribute is in use and cannot be deleted. Set active to false instead",
+      message:
+        "Attribute is in use and cannot be deleted. Set active to false instead",
     });
   }
   console.error(error);

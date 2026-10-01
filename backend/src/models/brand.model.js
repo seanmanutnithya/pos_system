@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
+const sequelize = require("@config/db");
 
 const Brand = sequelize.define(
   "Brand",
@@ -41,7 +41,7 @@ const Brand = sequelize.define(
     updatedAt: "updated_date",
     charset: "utf8mb4",
     collate: "utf8mb4_unicode_ci",
-  }
+  },
 );
 
 module.exports = Brand;

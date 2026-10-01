@@ -3,7 +3,7 @@ const {
   create,
   update,
   remove,
-} = require("../controllers/category.controller");
+} = require("@controllers/category.controller");
 
 const categoryRoute = (app) => {
   app.get("/api/v1/category", getAll);

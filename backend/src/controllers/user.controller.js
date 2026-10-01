@@ -3,7 +3,7 @@ const {
   ValidationError,
   ForeignKeyConstraintError,
 } = require("sequelize");
-const { User } = require("../models");
+const { User } = require("@models");
 
 // Same values as the chk_user_role CHECK constraint on tbl_user
 const ROLES = ["admin", "supervisor", "staff"];
@@ -32,7 +32,7 @@ const pickUserFields = ({
     active,
   };
   return Object.fromEntries(
-    Object.entries(fields).filter(([, value]) => value !== undefined)
+    Object.entries(fields).filter(([, value]) => value !== undefined),
   );
 };
 
@@ -60,7 +60,8 @@ const validateUserFields = (fields, { isCreate }) => {
     // length is checked first so the pattern never runs on very long input
     const error = checkRequiredText("email", email, 100);
     if (error) return error;
-    if (!EMAIL_PATTERN.test(email)) return "email must be a valid email address";
+    if (!EMAIL_PATTERN.test(email))
+      return "email must be a valid email address";
   }
   if (
     shouldCheck("password") &&
@@ -100,7 +101,8 @@ const handleError = (res, error) => {
   }
   if (error instanceof ForeignKeyConstraintError) {
     return res.status(409).json({
-      message: "User is in use and cannot be deleted. Set active to false instead",
+      message:
+        "User is in use and cannot be deleted. Set active to false instead",
     });
   }
   console.error(error);

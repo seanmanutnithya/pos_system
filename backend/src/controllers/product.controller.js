@@ -3,14 +3,18 @@ const {
   ValidationError,
   ForeignKeyConstraintError,
 } = require("sequelize");
-const { Product, Category, Brand, Attribute } = require("../models");
+const { Product, Category, Brand, Attribute } = require("@models");
 
 const MAX_MONEY = 99999999.99; // largest value DECIMAL(10,2) can hold
 const MAX_INT = 2147483647; // largest value an INT column can hold
 
 // Every product response includes the names of its category, brand and attribute
 const productIncludes = [
-  { model: Category, as: "category", attributes: ["category_id", "category_name"] },
+  {
+    model: Category,
+    as: "category",
+    attributes: ["category_id", "category_name"],
+  },
   { model: Brand, as: "brand", attributes: ["brand_id", "brand_name"] },
   {
     model: Attribute,
@@ -55,7 +59,7 @@ const pickProductFields = ({
     active,
   };
   return Object.fromEntries(
-    Object.entries(fields).filter(([, value]) => value !== undefined)
+    Object.entries(fields).filter(([, value]) => value !== undefined),
   );
 };
 
@@ -69,7 +73,8 @@ const checkRequiredText = (name, value, maxLength) => {
   return null;
 };
 
-const isId = (value) => Number.isInteger(value) && value > 0 && value <= MAX_INT;
+const isId = (value) =>
+  Number.isInteger(value) && value > 0 && value <= MAX_INT;
 const isMoney = (value) =>
   typeof value === "number" && Number.isFinite(value) && value <= MAX_MONEY;
 
@@ -124,7 +129,11 @@ const validateProductFields = (fields, { isCreate }) => {
   }
   if (
     "quantity_stock" in fields &&
-    !(Number.isInteger(quantity_stock) && quantity_stock >= 0 && quantity_stock <= MAX_INT)
+    !(
+      Number.isInteger(quantity_stock) &&
+      quantity_stock >= 0 &&
+      quantity_stock <= MAX_INT
+    )
   ) {
     return "quantity_stock must be a whole number of 0 or more";
   }
@@ -149,12 +158,14 @@ const handleError = (res, error) => {
   if (error instanceof ForeignKeyConstraintError) {
     // "child": the category, brand or attribute sent in the body doesn't exist
     if (error.reltype === "child") {
-      const field = error.fields?.[0] ?? "category_id, brand_id or attribute_id";
+      const field =
+        error.fields?.[0] ?? "category_id, brand_id or attribute_id";
       return res.status(400).json({ message: `${field} does not exist` });
     }
     // "parent": sales or orders still point at this product
     return res.status(409).json({
-      message: "Product is in use and cannot be deleted. Set active to false instead",
+      message:
+        "Product is in use and cannot be deleted. Set active to false instead",
     });
   }
   console.error(error);

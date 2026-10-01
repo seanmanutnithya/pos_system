@@ -3,7 +3,7 @@ const {
   ValidationError,
   ForeignKeyConstraintError,
 } = require("sequelize");
-const { Brand } = require("../models");
+const { Brand } = require("@models");
 
 // Only these columns can be set from the request body.
 // Keys that are not sent are left out so an update doesn't overwrite them.

@@ -1,3 +1,4 @@
+require("module-alias/register");
 const express = require("express");
 const categoryRoute = require("./src/routers/category.route");
 const brandRoute = require("./src/routers/brand.route");

@@ -3,7 +3,7 @@ const {
   create,
   update,
   remove,
-} = require("../controllers/user.controller");
+} = require("@controllers/user.controller");
 
 const userRoute = (app) => {
   app.get("/api/v1/user", getAll);

@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
+const sequelize = require("@config/db");
 
 const User = sequelize.define(
   "User",
@@ -69,7 +69,7 @@ const User = sequelize.define(
         }
       },
     },
-  }
+  },
 );
 
 // Never send the password hash in API responses

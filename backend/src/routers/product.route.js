@@ -3,7 +3,7 @@ const {
   create,
   update,
   remove,
-} = require("../controllers/product.controller");
+} = require("@controllers/product.controller");
 
 const productRoute = (app) => {
   app.get("/api/v1/product", getAll);

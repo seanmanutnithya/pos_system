@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
+const sequelize = require("@config/db");
 
 const Attribute = sequelize.define(
   "Attribute",
@@ -39,7 +39,7 @@ const Attribute = sequelize.define(
     updatedAt: false, // tbl_attribute has no updated_date column
     charset: "utf8mb4",
     collate: "utf8mb4_unicode_ci",
-  }
+  },
 );
 
 module.exports = Attribute;

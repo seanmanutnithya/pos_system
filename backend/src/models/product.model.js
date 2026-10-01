@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
+const sequelize = require("@config/db");
 
 // MySQL returns DECIMAL columns as strings ("12.50"), so return them as numbers
 const decimalAsNumber = (field) =>
@@ -88,7 +88,7 @@ const Product = sequelize.define(
     updatedAt: "updated_date",
     charset: "utf8mb4",
     collate: "utf8mb4_unicode_ci",
-  }
+  },
 );
 
 module.exports = Product;

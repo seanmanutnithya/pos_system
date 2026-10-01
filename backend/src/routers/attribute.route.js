@@ -3,7 +3,7 @@ const {
   create,
   update,
   remove,
-} = require("../controllers/attribute.controller");
+} = require("@controllers/attribute.controller");
 
 const attributeRoute = (app) => {
   app.get("/api/v1/attribute", getAll);
