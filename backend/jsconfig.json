@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@config/*": ["./src/config/*"],
+      "@helper/*": ["./src/helper/*"],
+      "@models/*": ["./src/models/*"],
+      "@controllers/*": ["./src/controllers/*"]
+    }
+  }
+}

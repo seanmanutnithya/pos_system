@@ -5,10 +5,17 @@
     "dotenv": "^18.0.4",
     "express": "^5.2.1",
     "init": "^0.1.2",
+    "module-alias": "^2.3.4",
     "mysql2": "^3.24.4",
     "sequelize": "^6.37.8"
   },
   "scripts": {
     "start": "nodemon index.js"
+  },
+  "_moduleAliases": {
+    "@config": "./src/config",
+    "@helper": "./src/helper",
+    "@models": "./src/models",
+    "@controllers": "./src/controllers"
   }
 }
