@@ -3,4 +3,5 @@ node_modules/
 .env
 .env.production
 .env.development
-testing_api.md
+
+md/
