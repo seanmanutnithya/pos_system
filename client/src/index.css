@@ -1,1 +1,57 @@
 @import "tailwindcss";
+
+/*
+ * Brand guideline tokens. Every Tailwind color/font utility used in the app
+ * comes from here, e.g. bg-brand, text-ink, border-line.
+ * Spacing follows the 8px baseline grid: prefer even steps (2, 4, 6, 8 ...).
+ */
+@theme {
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* Deep Black: text, dark buttons, active tabs */
+  --color-ink: #1a1a1a;
+  /* Off-White: page background */
+  --color-paper: #f5f5f5;
+  /* Vibrant Violet: primary actions and accents */
+  --color-brand: #7c4dff;
+  /* Darker violet for hover and for text on brand-soft (keeps 4.5:1 contrast) */
+  --color-brand-strong: #5b2ee0;
+  /* Light violet for selected and pressed states */
+  --color-brand-soft: #ebe4ff;
+
+  --color-line: #e4e4e4;
+  --color-muted: #6b6b6b;
+  /* Errors and "Out of Stock" */
+  --color-danger: #b42318;
+  --color-danger-soft: #fdecec;
+  /* "Low Stock" */
+  --color-warning: #b54708;
+  --color-warning-soft: #fef6e7;
+}
+
+@layer base {
+  body {
+    @apply bg-paper font-sans text-ink antialiased;
+  }
+
+  /* Tailwind v4 no longer sets a pointer cursor on buttons */
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
+  /* A native <dialog> doesn't stop the page behind it from scrolling */
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+
+  /* No visible scrollbars anywhere. Everything still scrolls with the mouse
+     wheel, trackpad, touch and keyboard. The second rule covers browsers
+     that don't support scrollbar-width yet. */
+  * {
+    scrollbar-width: none;
+  }
+
+  *::-webkit-scrollbar {
+    display: none;
+  }
+}
