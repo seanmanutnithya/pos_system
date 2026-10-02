@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
+    "antd": "^6.6.5",
     "axios": "^1.20.0",
+    "gsap": "^3.15.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.4",
