@@ -43,8 +43,15 @@ const ProductMenuPage = () => {
     TABS.find((tab) => tab.id === searchParams.get("tab")) ?? TABS[0];
   // The element in the header where the open tab puts its buttons
   const [actionsTarget, setActionsTarget] = useState(null);
+  // 1 or -1 for the way the last switch went, so the new panel slides in
+  // from that side; 0 until the first switch
+  const [direction, setDirection] = useState(0);
 
-  const selectTab = (id) => setSearchParams({ tab: id }, { replace: true });
+  const selectTab = (id) => {
+    const nextIndex = TABS.findIndex((tab) => tab.id === id);
+    setDirection(Math.sign(nextIndex - TABS.indexOf(activeTab)));
+    setSearchParams({ tab: id }, { replace: true });
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -68,7 +75,7 @@ const ProductMenuPage = () => {
 
       <PageActionsContext value={actionsTarget}>
         {/* The key gives each tab a fresh panel instead of reusing the last one's state */}
-        <TabPanel key={activeTab.id} id={activeTab.id}>
+        <TabPanel key={activeTab.id} id={activeTab.id} direction={direction}>
           {activeTab.content}
         </TabPanel>
       </PageActionsContext>
