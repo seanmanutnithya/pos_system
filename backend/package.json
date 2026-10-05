@@ -6,6 +6,7 @@
     "express": "^5.2.1",
     "init": "^0.1.2",
     "module-alias": "^2.3.4",
+    "multer": "^2.4.0",
     "mysql2": "^3.24.4",
     "sequelize": "^6.37.8"
   },

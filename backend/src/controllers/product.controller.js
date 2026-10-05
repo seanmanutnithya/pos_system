@@ -4,6 +4,11 @@ const {
   ForeignKeyConstraintError,
 } = require("sequelize");
 const { Product, Category, Brand, Attribute } = require("@models");
+const {
+  validateImage,
+  saveImage,
+  deleteImage,
+} = require("@helper/image.helper");
 
 const MAX_MONEY = 99999999.99; // largest value DECIMAL(10,2) can hold
 const MAX_INT = 2147483647; // largest value an INT column can hold
@@ -219,16 +224,55 @@ const update = async (req, res) => {
 // named "remove" because "delete" is a reserved word in JS
 const remove = async (req, res) => {
   try {
-    const deleted = await Product.destroy({
-      where: { product_id: req.params.id },
-    });
-    if (!deleted) {
+    const product = await Product.findByPk(req.params.id);
+    if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
+
+    await product.destroy();
+    // only reached once the row is gone, so a product in use keeps its image
+    await deleteImage(product.image);
     res.json({ message: "Product deleted" });
   } catch (error) {
     handleError(res, error);
   }
 };
 
-module.exports = { getAll, create, update, remove };
+// Saves the uploaded file (req.file, from receiveImage) as the product's image
+// and deletes the previous image file
+const uploadImage = async (req, res) => {
+  try {
+    const product = await findProductById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const invalid = validateImage(req.file);
+    if (invalid) return res.status(400).json({ message: invalid });
+
+    const oldImage = product.image;
+    await product.update({ image: await saveImage("product", req.file) });
+    await deleteImage(oldImage);
+    res.json({ data: product });
+  } catch (error) {
+    handleError(res, error);
+  }
+};
+
+const removeImage = async (req, res) => {
+  try {
+    const product = await findProductById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const oldImage = product.image;
+    await product.update({ image: null });
+    await deleteImage(oldImage);
+    res.json({ data: product });
+  } catch (error) {
+    handleError(res, error);
+  }
+};
+
+module.exports = { getAll, create, update, remove, uploadImage, removeImage };

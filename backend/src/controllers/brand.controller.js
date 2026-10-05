@@ -4,6 +4,11 @@ const {
   ForeignKeyConstraintError,
 } = require("sequelize");
 const { Brand } = require("@models");
+const {
+  validateImage,
+  saveImage,
+  deleteImage,
+} = require("@helper/image.helper");
 
 // Only these columns can be set from the request body.
 // Keys that are not sent are left out so an update doesn't overwrite them.
@@ -105,16 +110,55 @@ const update = async (req, res) => {
 // named "remove" because "delete" is a reserved word in JS
 const remove = async (req, res) => {
   try {
-    const deleted = await Brand.destroy({
-      where: { brand_id: req.params.id },
-    });
-    if (!deleted) {
+    const brand = await Brand.findByPk(req.params.id);
+    if (!brand) {
       return res.status(404).json({ message: "Brand not found" });
     }
+
+    await brand.destroy();
+    // only reached once the row is gone, so a brand in use keeps its image
+    await deleteImage(brand.image);
     res.json({ message: "Brand deleted" });
   } catch (error) {
     handleError(res, error);
   }
 };
 
-module.exports = { getAll, create, update, remove };
+// Saves the uploaded file (req.file, from receiveImage) as the brand's image
+// and deletes the previous image file
+const uploadImage = async (req, res) => {
+  try {
+    const brand = await Brand.findByPk(req.params.id);
+    if (!brand) {
+      return res.status(404).json({ message: "Brand not found" });
+    }
+
+    const invalid = validateImage(req.file);
+    if (invalid) return res.status(400).json({ message: invalid });
+
+    const oldImage = brand.image;
+    await brand.update({ image: await saveImage("brand", req.file) });
+    await deleteImage(oldImage);
+    res.json({ data: brand });
+  } catch (error) {
+    handleError(res, error);
+  }
+};
+
+const removeImage = async (req, res) => {
+  try {
+    const brand = await Brand.findByPk(req.params.id);
+    if (!brand) {
+      return res.status(404).json({ message: "Brand not found" });
+    }
+
+    const oldImage = brand.image;
+    await brand.update({ image: null });
+    await deleteImage(oldImage);
+    res.json({ data: brand });
+  } catch (error) {
+    handleError(res, error);
+  }
+};
+
+module.exports = { getAll, create, update, remove, uploadImage, removeImage };

@@ -18,6 +18,11 @@ const Brand = sequelize.define(
       type: DataTypes.STRING(500),
       allowNull: true,
     },
+    // public path of the uploaded image, set only by the image endpoints
+    image: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
