@@ -6,7 +6,8 @@ import { formatDate, formatDateTime } from "@/lib/format";
 // Table columns that several record types share. A column is
 // { key, header, render(record), sortValue?(record), className? }.
 
-export const nameColumn = ({ header, getTitle, getSubtitle }) => ({
+// getImage: the record's image path, for record types that have images
+export const nameColumn = ({ header, getTitle, getSubtitle, getImage }) => ({
   key: "name",
   header,
   sortValue: getTitle,
@@ -14,6 +15,7 @@ export const nameColumn = ({ header, getTitle, getSubtitle }) => ({
     <RecordCell
       title={getTitle(record)}
       subtitle={getSubtitle?.(record)}
+      image={getImage?.(record)}
       muted={!record.active}
     />
   ),

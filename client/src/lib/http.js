@@ -3,9 +3,11 @@ import axios from "axios";
 // In development, Vite forwards /api to the backend (see vite.config.js), so
 // the browser only talks to its own origin. Set VITE_API_BASE_URL when the
 // API is served from a different origin.
+// There is no default Content-Type: axios sets application/json for object
+// bodies by itself, and a JSON default would make it turn FormData (image
+// uploads) into JSON and drop the file.
 export const http = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "/api/v1",
-  headers: { "Content-Type": "application/json" },
   timeout: 15000,
 });
 

@@ -28,6 +28,7 @@ export const brandConfig = {
       header: "Brand",
       getTitle: (brand) => brand.brand_name,
       getSubtitle: (brand) => brand.description,
+      getImage: (brand) => brand.image,
     }),
     statusColumn(),
     createdColumn(),
@@ -53,6 +54,8 @@ export const brandConfig = {
     createDescription: "Brands are the makers or suppliers of your products.",
     editDescription: "Changes apply to every product from this brand.",
     fields: [
+      // Uploaded separately after the brand is saved (see RecordPanel)
+      { name: "image", label: "Logo", type: "image" },
       {
         name: "brand_name",
         label: "Name",

@@ -72,13 +72,31 @@ export const useRecords = (api, idKey) => {
     [api],
   );
 
-  const update = useCallback(
-    async (id, values) => {
-      const updated = await api.update(id, values);
-      setItems((current) => current.map((item) => (item[idKey] === id ? updated : item)));
+  // Puts a record returned by the API in place of the old one
+  const replaceItem = useCallback(
+    (updated) => {
+      setItems((current) =>
+        current.map((item) => (item[idKey] === updated[idKey] ? updated : item)),
+      );
       return updated;
     },
-    [api, idKey],
+    [idKey],
+  );
+
+  const update = useCallback(
+    async (id, values) => replaceItem(await api.update(id, values)),
+    [api, replaceItem],
+  );
+
+  // Only for record types whose api has images (see api/createRecordApi.js)
+  const uploadImage = useCallback(
+    async (id, file) => replaceItem(await api.uploadImage(id, file)),
+    [api, replaceItem],
+  );
+
+  const removeImage = useCallback(
+    async (id) => replaceItem(await api.removeImage(id)),
+    [api, replaceItem],
   );
 
   const updateMany = useCallback(
@@ -101,5 +119,16 @@ export const useRecords = (api, idKey) => {
     [api, idKey],
   );
 
-  return { items, status, error, reload, create, update, updateMany, removeMany };
+  return {
+    items,
+    status,
+    error,
+    reload,
+    create,
+    update,
+    updateMany,
+    removeMany,
+    uploadImage,
+    removeImage,
+  };
 };

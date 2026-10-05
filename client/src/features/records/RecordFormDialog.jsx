@@ -2,6 +2,7 @@ import { useId, useRef, useState } from "react";
 import Alert from "@/components/ui/Alert";
 import Button from "@/components/ui/Button";
 import { SelectField, TextAreaField, TextField } from "@/components/ui/Field";
+import ImageField from "@/components/ui/ImageField";
 import Modal from "@/components/ui/Modal";
 import SegmentedControl from "@/components/ui/SegmentedControl";
 import { capitalize } from "@/lib/format";
@@ -31,6 +32,18 @@ const FormControl = ({ field, value, error, options, suggestions, loading, autoF
         />
         {field.hint && <p className="text-xs text-muted">{field.hint}</p>}
       </div>
+    );
+  }
+
+  if (field.type === "image") {
+    return (
+      <ImageField
+        label={field.label}
+        hint={field.hint}
+        value={value}
+        onChange={onChange}
+        error={error}
+      />
     );
   }
 
@@ -100,6 +113,10 @@ const RecordFormDialog = ({ config, record, records, lookups, lookupState, onSub
   const [submitting, setSubmitting] = useState(false);
 
   const hasChanges = form.fields.some((field) => values[field.name] !== initialValues[field.name]);
+  // Focus starts in the first field you type in, not on the image or status
+  const autoFocusName = form.fields.find(
+    (field) => field.type !== "image" && field.type !== "status",
+  )?.name;
 
   const focusField = (name) => formRef.current?.elements.namedItem(name)?.focus();
 
@@ -185,7 +202,7 @@ const RecordFormDialog = ({ config, record, records, lookups, lookupState, onSub
           </div>
         )}
 
-        {form.fields.map((field, index) => (
+        {form.fields.map((field) => (
           <div key={field.name} className={field.half ? undefined : "sm:col-span-2"}>
             <FormControl
               field={field}
@@ -194,7 +211,7 @@ const RecordFormDialog = ({ config, record, records, lookups, lookupState, onSub
               options={field.options?.({ lookups, record })}
               suggestions={field.suggestions?.({ records })}
               loading={lookupState?.loading}
-              autoFocus={index === 0}
+              autoFocus={field.name === autoFocusName}
               onChange={(value) => setValue(field.name, value)}
             />
           </div>

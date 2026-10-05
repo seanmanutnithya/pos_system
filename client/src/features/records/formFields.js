@@ -10,6 +10,10 @@ import { formatNumber } from "@/lib/format";
 //   money     positive? (must be more than 0)
 //   integer   0 or more
 //   status    Active / Inactive
+//   image     the record's one image. The form value is the saved image's
+//             path, null for none, or { file, url } for a newly picked file.
+//             It is parsed to the path, null, or the File to upload; the
+//             record's JSON update never includes it (see RecordPanel).
 // `half: true` puts two fields side by side on wider screens.
 
 // The largest values the database columns hold: DECIMAL(10,2) and INT
@@ -20,6 +24,7 @@ const INTEGER_PATTERN = /^\d+$/;
 
 const toFormValue = (field, value) => {
   if (field.type === "status") return value ?? true;
+  if (field.type === "image") return value ?? null;
   if (value == null) return field.defaultValue ?? "";
   if (field.type === "money") return Number(value).toFixed(2);
   return String(value);
@@ -55,6 +60,8 @@ const parseNumber = (field, text) => {
 
 const parseField = (field, rawValue) => {
   if (field.type === "status") return { value: rawValue };
+  // Type and size were checked when the file was picked (see ImageField)
+  if (field.type === "image") return { value: rawValue?.file ?? rawValue };
 
   const text = rawValue.trim();
   if (text === "") {

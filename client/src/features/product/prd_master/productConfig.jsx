@@ -64,6 +64,7 @@ export const productConfig = {
       header: "Product",
       getTitle: (product) => product.product_name,
       getSubtitle: (product) => `SKU ${product.sku}`,
+      getImage: (product) => product.image,
     }),
     {
       key: "category",
@@ -164,6 +165,8 @@ export const productConfig = {
     createDescription: "Add something you sell. Fields marked * are required.",
     editDescription: "Changes show everywhere this product is listed.",
     fields: [
+      // Uploaded separately after the product is saved (see RecordPanel)
+      { name: "image", label: "Image", type: "image" },
       {
         name: "product_name",
         label: "Name",

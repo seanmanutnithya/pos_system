@@ -30,10 +30,18 @@ const PAGE_SIZE = 10;
 // `lookups` and `lookupState` are passed on to the form (see RecordFormDialog).
 const RecordPanel = ({ config, lookups, lookupState }) => {
   const { idKey, noun, getName } = config;
-  const { items, status, error, reload, create, update, updateMany, removeMany } = useRecords(
-    config.api,
-    idKey,
-  );
+  const {
+    items,
+    status,
+    error,
+    reload,
+    create,
+    update,
+    updateMany,
+    removeMany,
+    uploadImage,
+    removeImage,
+  } = useRecords(config.api, idKey);
   const { search, setSearch } = usePageSearch();
   const { notify } = useToast();
   const list = useListControls(items, { config, search, pageSize: PAGE_SIZE });
@@ -66,13 +74,25 @@ const RecordPanel = ({ config, lookups, lookupState }) => {
     list.setFilter(config.filters[0].value);
   };
 
+  // Saves the record's fields first, then its image (if the form has an image
+  // field): a new record needs its id before an image can be uploaded. If only
+  // the image fails, the record is still saved, so the dialog closes and a
+  // message says the image wasn't saved.
   const handleSave = async (values) => {
-    if (dialog.mode === "edit") {
-      await update(dialog.record[idKey], values);
-      notify(`${title} updated`);
-    } else {
-      await create(values);
-      notify(`${title} added`);
+    const { image, ...fields } = values;
+    const isEditing = dialog.mode === "edit";
+    const previousImage = dialog.record?.image ?? null;
+    const saved = isEditing
+      ? await update(dialog.record[idKey], fields)
+      : await create(fields);
+    const done = `${title} ${isEditing ? "updated" : "added"}`;
+
+    try {
+      if (image instanceof File) await uploadImage(saved[idKey], image);
+      else if (image === null && previousImage) await removeImage(saved[idKey]);
+      notify(done);
+    } catch (err) {
+      notify(`${done}, but the image wasn't saved: ${getErrorMessage(err)}`, { tone: "error" });
     }
     closeDialog();
   };
